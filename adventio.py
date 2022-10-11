@@ -52,7 +52,7 @@ class STDINStream:
 
     def next_n_int(self: Self, n: int) -> Generator[int, None, None]:
         """
-        Reads the next n integers from input and returns them in a list
+        Reads the next n integers from input and returns them in a generator
         """
         for _ in range(n):
             yield self.next_int()
