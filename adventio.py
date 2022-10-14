@@ -1,18 +1,25 @@
 from parse import compile
 from collections import deque
-from typing import Generator, List
+from typing import Generator, List, Optional
 from typing_extensions import Self
 
-class STDINStream:
-    def __init__(self: Self):
+class IStream:
+    def __init__(self: Self, filename: Optional[str] = None):
         self.input_deque = deque()
+        self.finlines = None
+        if filename is not None:
+            with open(filename, "r") as fin:
+                self.finlines = iter(fin.readlines())
 
     def next(self: Self) -> str:
         """
         Returns the next string token from stdin
         """
         if len(self.input_deque) <= 0:
-            self.input_deque.extend(input().split())
+            if self.finlines is not None:
+                self.input_deque.extend(next(self.finlines).split())
+            else:
+                self.input_deque.extend(input().split())
         return self.input_deque.popleft()     
 
     def next_int(self: Self) -> str:
@@ -32,7 +39,12 @@ class STDINStream:
         Discards progress on the current line, then consumes and returns the next line
         """
         self.input_deque.clear()
+        if self.finlines is not None:
+            return next(self.finlines)
         return input()
+
+    def all_lines(self: Self) -> List[str]:
+        return list(self.finlines)
 
     def next_n(self: Self, n: int) -> Generator[str, None, None]:
         """
@@ -55,27 +67,33 @@ def parse_example():
 
     Consider search (looks for it), findall (all occurrences)
     """
-    lines: List[str] = []
-    with open("filename", "r") as fin:
-        lines = fin.readlines()
+    lines: List[str] = IStream("filename").all_lines()
     
     pattern = compile("{name:w}|{number:d}|{id:2.2w}")
 
     result: dict = {}
     for line in lines:
-        print(line)
         line_result = pattern.parse(line.rstrip('\r\n'))
         result[line_result["name"]] = (line_result["number"], line_result["id"])
     return result
 
-def input_example():
+def stdinput_example():
     """
     Reads 5 integers from stdin
     """
-    cin = STDINStream()
+    cin = IStream()
     for i in cin.next_n_int(5):
+        print(i)
+
+def finput_example():
+    """
+    Reads 5 integers from a file
+    """
+    fin = IStream("integers")
+    for i in fin.next_n_int(5):
         print(i)
 
 if __name__ == "__main__":
     print(parse_example())
-    input_example()
+    finput_example()
+    stdinput_example()
