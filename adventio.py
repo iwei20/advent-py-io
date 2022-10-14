@@ -1,17 +1,11 @@
 import os
 import sys
-import parse
+from parse import compile
 from atexit import register
 from collections import deque
 from io import BytesIO
-from typing import Generator
+from typing import Generator, List
 from typing_extensions import Self
-
-sys.stdin = BytesIO(os.read(0, os.fstat(0).st_size))
-sys.stdout = BytesIO()
-register(lambda: os.write(1, sys.stdout.getvalue()))
-
-input = lambda: sys.stdin.readline().rstrip('\r\n')
 
 class STDINStream:
     def __init__(self: Self):
@@ -21,7 +15,7 @@ class STDINStream:
         """
         Returns the next string token from stdin
         """
-        if self.input_deque.empty():
+        if len(self.input_deque) <= 0:
             self.input_deque.extend(input().split())
         return self.input_deque.popleft()     
 
@@ -58,5 +52,34 @@ class STDINStream:
         for _ in range(n):
             yield self.next_int()
     
-def _parse_example():
-    pass
+def parse_example():
+    """
+    https://pypi.org/project/parse/
+    Reads results: name|numbers|2 chars
+
+    Consider search (looks for it), findall (all occurrences)
+    """
+    lines: List[str] = []
+    with open("filename", "r") as fin:
+        lines = fin.readlines()
+    
+    pattern = compile("{name:w}|{number:d}|{id:2.2w}")
+
+    result: dict = {}
+    for line in lines:
+        print(line)
+        line_result = pattern.parse(line.rstrip('\r\n'))
+        result[line_result["name"]] = (line_result["number"], line_result["id"])
+    return result
+
+def input_example():
+    """
+    Reads 5 integers from stdin
+    """
+    cin = STDINStream()
+    for i in cin.next_n_int(5):
+        print(i)
+
+if __name__ == "__main__":
+    print(parse_example())
+    input_example()
