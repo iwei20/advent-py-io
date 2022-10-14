@@ -4,6 +4,9 @@ from typing import Generator, List, Optional
 from typing_extensions import Self
 
 class IStream:
+    """
+    Convenience class that somewhat merges the functionality of 
+    """
     def __init__(self: Self, filename: Optional[str] = None):
         self.input_deque = deque()
         self.finlines = None
@@ -13,7 +16,7 @@ class IStream:
 
     def next(self: Self) -> str:
         """
-        Returns the next string token from stdin
+        Returns the next string token
         """
         if len(self.input_deque) <= 0:
             if self.finlines is not None:
@@ -24,13 +27,13 @@ class IStream:
 
     def next_int(self: Self) -> str:
         """
-        Returns the next integer from stdin
+        Returns the next integer
         """
         return int(self.next())
 
     def next_float(self: Self) -> float:
         """
-        Returns the next float from stdin
+        Returns the next float
         """
         return float(self.next())
 
@@ -44,7 +47,23 @@ class IStream:
         return input()
 
     def all_lines(self: Self) -> List[str]:
+        """
+        Only permissible if reading a file
+        """
         return list(self.finlines)
+
+    def all_tokens(self: Self) -> List[str]:
+        """
+        Only permissible if readin a file
+        """
+        lines = self.all_lines()
+        result: List[str] = list()
+        for line in lines:
+            result.extend(line.split())
+        return result
+
+    def all_ints(self: Self) -> List[int]:
+        return list(map(int, self.all_tokens()))
 
     def next_n(self: Self, n: int) -> Generator[str, None, None]:
         """
@@ -90,7 +109,7 @@ def finput_example():
     Reads 5 integers from a file
     """
     fin = IStream("integers")
-    for i in fin.next_n_int(5):
+    for i in fin.all_ints():
         print(i)
 
 if __name__ == "__main__":
