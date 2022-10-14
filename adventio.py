@@ -1,5 +1,6 @@
 import os
 import sys
+import parse
 from atexit import register
 from collections import deque
 from io import BytesIO
@@ -57,4 +58,5 @@ class STDINStream:
         for _ in range(n):
             yield self.next_int()
     
-
+def _parse_example():
+    pass
