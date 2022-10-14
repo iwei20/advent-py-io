@@ -5,7 +5,11 @@ from typing_extensions import Self
 
 class IStream:
     """
-    Convenience class that somewhat merges the functionality of 
+    Convenience class that somewhat merges the functionality of
+    reading stdin and reading from a file.
+
+    Reads the entirety of a file when constructed, 
+    so it's not really a stream. But I don't have a more creative name.
     """
     def __init__(self: Self, filename: Optional[str] = None):
         self.input_deque = deque()
