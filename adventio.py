@@ -83,7 +83,7 @@ class IStream:
         for _ in range(n):
             yield self.next_int()
     
-def parse_example():
+def _parse_example():
     """
     https://pypi.org/project/parse/
     Reads results: name|numbers|2 chars
@@ -100,7 +100,7 @@ def parse_example():
         result[line_result["name"]] = (line_result["number"], line_result["id"])
     return result
 
-def stdinput_example():
+def _stdinput_example():
     """
     Reads 5 integers from stdin
     """
@@ -108,7 +108,7 @@ def stdinput_example():
     for i in cin.next_n_int(5):
         print(i)
 
-def finput_example():
+def _finput_example():
     """
     Reads 5 integers from a file
     """
@@ -117,6 +117,6 @@ def finput_example():
         print(i)
 
 if __name__ == "__main__":
-    print(parse_example())
-    finput_example()
-    stdinput_example()
+    print(_parse_example())
+    _finput_example()
+    _stdinput_example()
